@@ -8,6 +8,7 @@ use Arvan\Vod\Extensions\CommonFunctions;
 use Arvan\Vod\ObjectSerializer;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\MultipartStream;
+use GuzzleHttp\Psr7\Query;
 use GuzzleHttp\Psr7\Request;
 
 final class File extends BaseClass
@@ -71,7 +72,7 @@ final class File extends BaseClass
                 'Upload-Offset' => $response['Upload-Offset'][0],
             ];
         } catch (ApiException $e) {
-            throw $e->getCode();
+            throw $e;
         }
     }
 
@@ -128,7 +129,7 @@ final class File extends BaseClass
                 $httpBody = \GuzzleHttp\json_encode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = Query::build($formParams);
             }
         }
 
@@ -149,7 +150,7 @@ final class File extends BaseClass
             $headers
         );
 
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = Query::build($queryParams);
 
         return new Request(
             'HEAD',
@@ -194,7 +195,7 @@ final class File extends BaseClass
 
             return ['body' => $url, 'status' => $statusCode];
         } catch (ApiException $e) {
-            throw $e->getCode();
+            throw $e;
         }
     }
 
@@ -267,7 +268,7 @@ final class File extends BaseClass
                 $httpBody = \GuzzleHttp\json_encode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = Query::build($formParams);
             }
         } else {
             throw new \InvalidArgumentException(
@@ -294,7 +295,7 @@ final class File extends BaseClass
 
         $httpBody = fopen($this->fileInfo['realpath'], 'rb');
 
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = Query::build($queryParams);
 
         return new Request(
             'PATCH',
@@ -349,7 +350,7 @@ final class File extends BaseClass
                 'url' => $responseHeaderLocation,
             ];
         } catch (ApiException $e) {
-            throw $e->getCode();
+            throw $e;
         }
     }
 
@@ -437,7 +438,7 @@ final class File extends BaseClass
                 $httpBody = \GuzzleHttp\json_encode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = Query::build($formParams);
             }
         }
 
@@ -458,7 +459,7 @@ final class File extends BaseClass
             $headers
         );
 
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = Query::build($queryParams);
 
         return new Request(
             'POST',
@@ -493,7 +494,7 @@ final class File extends BaseClass
         $this->fileInfo['dirname'] = $pathinfo['dirname'];
         $this->fileInfo['basename'] = $pathinfo['basename'];
         $this->fileInfo['filename'] = $pathinfo['filename'];
-        $this->fileInfo['extension'] = $pathinfo['extension'];
+        $this->fileInfo['extension'] = isset($pathinfo['extension']) ? $pathinfo['extension'] : '';
         $this->fileInfo['mime'] = finfo_file(finfo_open(FILEINFO_MIME_TYPE), $file);
         $this->fileInfo['encoding'] = finfo_file(finfo_open(FILEINFO_MIME_ENCODING), $file);
         $this->fileInfo['size'] = $stat[7];

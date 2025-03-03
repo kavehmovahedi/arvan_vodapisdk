@@ -11,6 +11,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\MultipartStream;
+use GuzzleHttp\Psr7\Query;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
 
@@ -171,7 +172,7 @@ abstract class BaseClass
 
         if ($hasFile) {
             $multipart = true;
-            $formParams[$fileName] = \GuzzleHttp\Psr7\try_fopen(ObjectSerializer::toFormValue($formParams[$fileName]), 'rb');
+            $formParams[$fileName] = \GuzzleHttp\Psr7\Utils::tryFopen(ObjectSerializer::toFormValue($formParams[$fileName]), 'rb');
         }
 
         // query params
@@ -222,7 +223,7 @@ abstract class BaseClass
                 $httpBody = \GuzzleHttp\json_encode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = Query::build($formParams);
             }
         }
 
@@ -238,7 +239,7 @@ abstract class BaseClass
             $headers
         );
 
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = Query::build($queryParams);
 
         return new Request(
             $method,
@@ -265,7 +266,7 @@ abstract class BaseClass
 
     protected function queryStringBuilder($params)
     {
-        $query = \GuzzleHttp\Psr7\build_query($params);
+        $query = Query::build($params);
 
         return $query;
     }
